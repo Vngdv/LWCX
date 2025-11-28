@@ -55,14 +55,35 @@ public class DestroyModule extends JavaModule {
         Player player = event.getPlayer();
 
         boolean isOwner = protection.isOwner(player);
+        boolean canAdmin = event.canAdmin();
+        boolean canAccess = event.canAccess();
+
+        // Check if the player is allowed to break the protection
+        boolean canBreak = false;
 
         if (isOwner) {
+            // Owner can always break, unless readonly-remove is set and they're not an LWC admin
             if (!lwc.isAdmin(player) && Boolean.parseBoolean(lwc.resolveProtectionConfiguration(protection.getBlock(), "readonly-remove"))) {
                 lwc.sendLocale(player, "protection.accessdenied");
                 event.setCancelled(true);
                 return;
             }
+            canBreak = true;
+        } else if (canAdmin) {
+            // Protection admins (added via /cmodify @NAME) can break if allowAdminsToBreakProtection is true
+            boolean allowAdminsToBreak = Boolean.parseBoolean(lwc.resolveProtectionConfiguration(protection.getBlock(), "allowAdminsToBreakProtection"));
+            if (allowAdminsToBreak) {
+                canBreak = true;
+            }
+        } else if (canAccess) {
+            // Normal members (added via /cmodify NAME) can break if allowMembersToBreakProtection is true
+            boolean allowMembersToBreak = Boolean.parseBoolean(lwc.resolveProtectionConfiguration(protection.getBlock(), "allowMembersToBreakProtection"));
+            if (allowMembersToBreak) {
+                canBreak = true;
+            }
+        }
 
+        if (canBreak) {
             // bind the player of destroyed the protection
             // We don't need to save the history we modify because it will be saved anyway immediately after this
             for (History history : protection.getRelatedHistory(History.Type.TRANSACTION)) {
