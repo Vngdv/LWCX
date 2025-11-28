@@ -175,6 +175,14 @@ protections:
     # ONLY lwc admins will be able to modify the protection
     readonly-remove: false
 
+    # If true, players who are protection admins (added via /cmodify @NAME) can break the protected block.
+    # They have full admin rights on the protection, so this allows them to remove it as well.
+    allowAdminsToBreakProtection: true
+
+    # If true, players who have normal access to a protection (added via /cmodify NAME) can break the protected block.
+    # Use with caution as this allows any member to destroy the protection.
+    allowMembersToBreakProtection: false
+
     # Current and custom protections are defined here by their block name or id
     # If you use the Id, you MUST encase it in quotes, for example (chest):
     # '54':
