@@ -261,7 +261,17 @@ public class LWCBlockListener implements Listener {
         // move
         // the protection to the chest that is not destroyed, if it is not that
         // one already.
-        if (canAccess && DoubleChestMatcher.PROTECTABLES_CHESTS.contains(block.getType())) {
+        // Determine if player should trigger protection transfer based on their access level and config
+        boolean shouldTransferProtection = false;
+        if (protection.isOwner(player)) {
+            shouldTransferProtection = true;
+        } else if (canAdmin) {
+            shouldTransferProtection = Boolean.parseBoolean(lwc.resolveProtectionConfiguration(block, "allowAdminsToBreakProtection"));
+        } else if (canAccess) {
+            shouldTransferProtection = Boolean.parseBoolean(lwc.resolveProtectionConfiguration(block, "allowMembersToBreakProtection"));
+        }
+
+        if (shouldTransferProtection && DoubleChestMatcher.PROTECTABLES_CHESTS.contains(block.getType())) {
             Block doubleChest = lwc.findAdjacentDoubleChest(block);
 
             if (doubleChest != null) {
