@@ -105,6 +105,7 @@ public class DestroyModule extends JavaModule {
             return;
         }
 
+        lwc.sendLocale(player, "protection.accessdenied");
         event.setCancelled(true);
     }
 
