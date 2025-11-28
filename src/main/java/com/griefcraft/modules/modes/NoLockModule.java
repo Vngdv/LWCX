@@ -81,6 +81,7 @@ public class NoLockModule extends JavaModule {
         event.setCancelled(true);
     }
 
+    @Override
     public void onRegisterProtection(LWCProtectionRegisterEvent event) {
         LWCPlayer player = lwc.wrapPlayer(event.getPlayer());
 
